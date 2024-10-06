@@ -4,6 +4,7 @@ import com.auth.auth_service.command.dto.SignUpRequest;
 import com.auth.auth_service.command.handler.SignUpHandler;
 import com.auth.auth_service.shared.dto.AuthResponse;
 import com.auth.auth_service.shared.dto.GenericResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AuthCommandController {
     private final SignUpHandler signUpHandler;
 
     @PostMapping(value = "/sign_up")
-    public ResponseEntity<GenericResponse<AuthResponse>> signUp(@RequestBody SignUpRequest request) {
+    public ResponseEntity<GenericResponse<AuthResponse>> signUp(@Valid @RequestBody SignUpRequest request) {
         AuthResponse token = signUpHandler.singUp(request);
         GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.CREATED.getReasonPhrase(), token);
 

@@ -62,9 +62,6 @@ public class SignUpHandler {
         }
 
         Role role = checkRoleEnumHandler.handler(new CheckRoleQuery(request.getRole()));
-//                .orElseThrow(
-//                        () -> new RoleNotFoundException(errorMessage.ROLE_NOT_FOUND)
-//                );
 
         User user = User.builder()
                 .username(request.getUsername())

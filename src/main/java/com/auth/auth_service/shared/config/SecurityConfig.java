@@ -22,18 +22,18 @@ public class SecurityConfig {
     private final AuthenticationProvider authProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authRequest ->
                                 authRequest.requestMatchers("/api/auth/**").permitAll()
-                                        .requestMatchers("/api/news/**").permitAll()
-                                        .requestMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.name())
-                                        .requestMatchers("/api/journalist/**").hasRole(RoleEnum.JOURNALIST.name())  // Only journalists can create/edit news
-                                        .requestMatchers("/api/publisher/**").hasRole(RoleEnum.PUBLISHER.name())    // Only publishers can review/publish
-                                        .requestMatchers("/api/reader/**").hasRole(RoleEnum.READERS.name())         // Readers need to be logged in to subscribe
-                                        .anyRequest().authenticated()
+                                    .requestMatchers("/api/news/**").permitAll()
+                                    .requestMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.name())
+                                    .requestMatchers("/api/journalist/**").hasRole(RoleEnum.JOURNALIST.name())  // Only journalists can create/edit news
+                                    .requestMatchers("/api/publisher/**").hasRole(RoleEnum.PUBLISHER.name())    // Only publishers can review/publish
+                                    .requestMatchers("/api/reader/**").hasRole(RoleEnum.READERS.name())         // Readers need to be logged in to subscribe
+                                    .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManger -> sessionManger.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authProvider)

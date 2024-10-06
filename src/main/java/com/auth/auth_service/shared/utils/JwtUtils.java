@@ -27,8 +27,8 @@ public class JwtUtils {
 
     public String getToken(User user){
         HashMap<String, Object> claims = new HashMap<>();
-        claims.put("uuid", user.getUuid());
-        claims.put("role", user.getRole());
+        claims.put("email", user.getEmail());
+        claims.put("role", user.getRole().getEnumName());
         return getToken(claims, user);
     }
 
