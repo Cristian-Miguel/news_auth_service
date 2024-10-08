@@ -9,6 +9,8 @@ import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -42,13 +44,13 @@ public class User implements UserDetails {
     private String lastName;
 
     @Column(nullable = false)
-    private Date createAt;
+    private LocalDateTime createAt;
 
     @Column(nullable = false)
-    private Date loggerAt;
+    private LocalDateTime loggerAt;
 
     @Column(nullable = false)
-    private Date updateAt;
+    private LocalDateTime updateAt;
 
     @ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_role", nullable = false)
@@ -58,7 +60,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column(nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -17,12 +18,11 @@ import java.util.Date;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @Email(message = "Email should be valid.")
     @NotBlank(message = "Email cannot be null.")
+    @Email(message = "Email should be valid.")
     private String email;
 
     @NotBlank(message = "Password cannot be null.")
-    @Size(min=8, max = 16)
     private String password;
 
     @NotBlank(message = "Username cannot be empty.")
@@ -39,6 +39,6 @@ public class SignUpRequest {
 
     @NotNull(message = "Birth date cannot be null.")
     @Past(message = "Birth date should be valid")
-    private Date birthDate;
+    private LocalDate birthDate;
 
 }

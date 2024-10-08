@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -71,9 +73,9 @@ public class SignUpHandler {
                 .lastName(request.getLastName())
                 .birthDate(request.getBirthDate())
                 .role(role)
-                .loggerAt(new Date())
-                .updateAt(new Date())
-                .createAt(new Date())
+                .loggerAt(LocalDateTime.now())
+                .updateAt(LocalDateTime.now())
+                .createAt(LocalDateTime.now())
                 .build();
 
         userCommandRepository.save(user);
