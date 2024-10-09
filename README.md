@@ -1,0 +1,1 @@
+## Auth service for the news app
