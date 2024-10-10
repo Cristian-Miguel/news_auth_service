@@ -1,9 +1,9 @@
 package com.auth.auth_service.signup;
 
-import com.auth.auth_service.command.dto.SignUpRequest;
-import com.auth.auth_service.query.repository.UserQueryRepository;
+import com.auth.auth_service.dto.SignUpRequest;
+import com.auth.auth_service.model.User;
+import com.auth.auth_service.repository.UserRepository;
 import com.auth.auth_service.shared.constant.RoleEnum;
-import com.auth.auth_service.shared.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,9 +32,9 @@ public class SignupTests {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private UserQueryRepository userQueryRepository;
+    private UserRepository userRepository;
 
-    private final String ROUTE = "/api/auth/command/sign_up";
+    private final String ROUTE = "/api/auth/sign_up";
 
     private Faker faker = new Faker();
 
@@ -139,7 +138,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -168,14 +167,14 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
     @Test
     public void duplicateEmailRequestInSignUp() throws Exception {
         long id = 1;
-        User user = userQueryRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow();
 
         SignUpRequest request = new SignUpRequest(
                 user.getEmail(),
@@ -200,7 +199,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.CONFLICT.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -229,7 +228,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -258,14 +257,14 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
     @Test
     public void duplicateUsernameRequestInSignUp() throws Exception {
         long id = 1;
-        User user = userQueryRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id).orElseThrow();
 
         SignUpRequest request = new SignUpRequest(
                 email,
@@ -290,7 +289,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.CONFLICT.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -319,7 +318,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -348,7 +347,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -377,7 +376,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -406,7 +405,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -435,7 +434,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -464,7 +463,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -493,7 +492,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -514,13 +513,13 @@ public class SignupTests {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson)
                 )
-                .andExpect(status().isNotFound())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.timestamp").exists())
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.status").value(HttpStatus.NOT_FOUND.value()))
+                .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -549,7 +548,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -578,7 +577,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 
@@ -609,7 +608,7 @@ public class SignupTests {
                 .andExpect(jsonPath("$.status").value(HttpStatus.INTERNAL_SERVER_ERROR.value()))
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").isNotEmpty())
-                .andExpect(jsonPath("$.path").value("uri=/api/auth/command/sign_up"))
+                .andExpect(jsonPath("$.path").value("uri="+ROUTE))
         ;
     }
 

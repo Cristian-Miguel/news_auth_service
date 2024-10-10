@@ -1,4 +1,4 @@
-package com.auth.auth_service.shared.model;
+package com.auth.auth_service.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -22,7 +21,6 @@ import java.util.List;
 @Entity
 @Table(name="tbl_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue
     private Long id;
