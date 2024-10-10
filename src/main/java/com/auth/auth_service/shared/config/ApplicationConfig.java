@@ -1,6 +1,6 @@
 package com.auth.auth_service.shared.config;
 
-import com.auth.auth_service.query.repository.UserQueryRepository;
+import com.auth.auth_service.repository.UserRepository;
 import com.auth.auth_service.shared.constant.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserQueryRepository userQueryRepository;
+    private final UserRepository userRepository;
     private final ErrorMessage errorMessage;
 
     @Bean
@@ -43,7 +43,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userService() {
-        return username -> userQueryRepository.findByUsername(username)
+        return username -> userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(errorMessage.buildUsernameTakenError(username)));
     }
 

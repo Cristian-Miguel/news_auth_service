@@ -1,10 +1,6 @@
 package com.auth.auth_service.shared.ExceptionHandler;
 
-import com.auth.auth_service.shared.dto.GenericErrorResponse;
-import com.auth.auth_service.shared.exception.RoleNotFoundException;
-import com.auth.auth_service.shared.exception.UserAlreadyExistsException;
-import com.auth.auth_service.shared.exception.UserNotFoundException;
-import lombok.AllArgsConstructor;
+import com.auth.auth_service.dto.GenericErrorResponse;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.auth.auth_service.shared.model;
+package com.auth.auth_service.model;
 
 import com.auth.auth_service.shared.constant.RoleEnum;
 import jakarta.persistence.*;

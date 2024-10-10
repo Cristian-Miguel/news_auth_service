@@ -1,16 +1,13 @@
-package com.auth.auth_service.command.dto;
+package com.auth.auth_service.dto;
 
 import com.auth.auth_service.shared.constant.RoleEnum;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @Builder
