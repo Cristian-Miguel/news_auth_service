@@ -35,4 +35,12 @@ public class ErrorMessage {
                 "'"+
                 " is already taken in the system.";
     }
+
+    public String buildUsernameDontExistError(String username){
+        return "The username " +
+                "'" +
+                username +
+                "'" +
+                " isn't exist in the system.";
+    }
 }
