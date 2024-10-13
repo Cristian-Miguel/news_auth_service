@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.auth</groupId>
 	<artifactId>auth-service</artifactId>
-	<version>0.2.3-SNAPSHOT</version>
+	<version>0.4.2-SNAPSHOT</version>
 	<name>auth-service</name>
 	<description>Microservice to auth the news app</description>
 	<url/>

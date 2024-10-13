@@ -1,6 +1,8 @@
 package com.auth.auth_service.shared.utils;
 
 import com.auth.auth_service.dto.GenericErrorResponse;
+import com.auth.auth_service.model.TokenBlackList;
+import com.auth.auth_service.repository.TokenBlackListRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -28,6 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
+    private final TokenBlackListRepository tokenBlackListRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,7 +39,8 @@ public class JwtFilter extends OncePerRequestFilter {
         final String username;
         final String uri = request.getRequestURI();
 
-        if(token==null && uri.equals("/api/auth/validate")) {
+        if(token==null &&
+                (uri.equals("/api/auth/validate") || uri.equals("/api/auth/sign_out"))) {
             handleErrorResponse(response, "Token invalid.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
             return;
@@ -44,6 +48,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if(token==null){
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if(tokenBlackListRepository.existsById(token)){
+            handleErrorResponse(response, "Token invalid.",
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
             return;
         }
 
