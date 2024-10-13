@@ -27,12 +27,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authRequest ->
-                                authRequest.requestMatchers("/api/auth/**").permitAll()
-                                    .requestMatchers("/api/news/**").permitAll()
-                                    .requestMatchers("/api/admin/**").hasRole(RoleEnum.ADMIN.name())
-                                    .requestMatchers("/api/journalist/**").hasRole(RoleEnum.JOURNALIST.name())  // Only journalists can create/edit news
-                                    .requestMatchers("/api/publisher/**").hasRole(RoleEnum.PUBLISHER.name())    // Only publishers can review/publish
-                                    .requestMatchers("/api/reader/**").hasRole(RoleEnum.READERS.name())         // Readers need to be logged in to subscribe
+                                authRequest.requestMatchers("/api/auth/sign_up", "/api/auth/sign_in").permitAll()
                                     .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManger -> sessionManger.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
