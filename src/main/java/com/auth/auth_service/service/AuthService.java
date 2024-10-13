@@ -2,6 +2,8 @@ package com.auth.auth_service.service;
 
 import com.auth.auth_service.dto.SignInRequest;
 import com.auth.auth_service.dto.SignUpRequest;
+import com.auth.auth_service.exception.BadUserCredentialsException;
+import com.auth.auth_service.exception.LockedAccountException;
 import com.auth.auth_service.exception.RoleNotFoundException;
 import com.auth.auth_service.model.Role;
 import com.auth.auth_service.model.User;
@@ -10,11 +12,12 @@ import com.auth.auth_service.repository.UserRepository;
 import com.auth.auth_service.shared.constant.ErrorMessage;
 import com.auth.auth_service.dto.AuthResponse;
 import com.auth.auth_service.exception.UserAlreadyExistsException;
+import com.auth.auth_service.shared.constant.SystemConstant;
 import com.auth.auth_service.shared.utils.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,31 +87,87 @@ public class AuthService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = {
+                BadUserCredentialsException.class,
+                LockedAccountException.class,
+                AuthenticationException.class
+            }
+    )
     public AuthResponse signIn(SignInRequest request){
-
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
-        ));
 
         User user = userRepository.findByUsername(
                 request.getUsername()
         ).orElseThrow(
-                () -> new UsernameNotFoundException(
-                        errorMessage.buildUsernameDontExistError(
-                                request.getUsername()
-                        )
+                () -> new BadUserCredentialsException(
+                        errorMessage.BAD_CREDENTIALS
                 )
         );
 
-        //Update the last logger
-        user.setLoggerAt(LocalDateTime.now());
+        if (isAccountLocked(user))
+            throw new LockedAccountException(errorMessage.LOCKED_ACCOUNT);
+
+        try{
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.getUsername(),
+                    request.getPassword()
+            ));
+
+            // Reset failed attempts on successful login
+            resetFailedAttempts(user);
+
+            // Update the last logger
+            user.setLoggerAt(LocalDateTime.now());
+            userRepository.save(user);
+
+            // Generate JWT token
+            String token = jwtUtils.getToken(user);
+            return AuthResponse.builder().token(token).build();
+
+        } catch (AuthenticationException ex){
+            increaseFailedAttempts(user);
+            throw new BadUserCredentialsException(errorMessage.BAD_CREDENTIALS);
+        }
+    }
+
+    //Sub methods for the service class
+    private boolean isAccountLocked(User user){
+        LocalDateTime lockTime = user.getLockTime();
+        if (user.getFailAttempts() >= SystemConstant.MAX_FAILED_ATTEMPTS.getValue() &&
+            lockTime == null
+        ) {
+            increaseFailedAttempts(user);
+            return true;
+        } else if(user.getFailAttempts() >= SystemConstant.MAX_FAILED_ATTEMPTS.getValue() &&
+                lockTime.plusMinutes(SystemConstant.LOCK_DURATION_MINUTES.getValue()).isAfter(LocalDateTime.now())
+        ) {
+            return true;
+        } else {
+            unlockAccount(user);
+            return false;
+        }
+    }
+
+    private void increaseFailedAttempts(User user) {
+        int newFailedAttempts = user.getFailAttempts() + 1;
+        user.setFailAttempts(newFailedAttempts);
+
+        if (newFailedAttempts >= SystemConstant.MAX_FAILED_ATTEMPTS.getValue()) {
+            user.setLockTime(LocalDateTime.now()); // Lock account
+        }
+
         userRepository.save(user);
+    }
 
-        String token = jwtUtils.getToken(user);
+    private void resetFailedAttempts(User user) {
+        user.setFailAttempts(0);
+        user.setLockTime(null); // Unlock account
+        userRepository.save(user);
+    }
 
-        return AuthResponse.builder().token(token).build();
+    private void unlockAccount(User user) {
+        user.setFailAttempts(0);
+        user.setLockTime(null); // Unlock account
+        userRepository.save(user);
     }
 
 }
