@@ -36,7 +36,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/validate")
+    @PostMapping(value = "/validate")
     public ResponseEntity<GenericResponse<AuthResponse>> validateToken(@RequestHeader("Authorization") String token){
         AuthResponse authToken = authService.validateToken(token);
         HttpHeaders headers = new HttpHeaders();
@@ -45,7 +45,13 @@ public class AuthController {
 
         ResponseEntity<GenericResponse<AuthResponse>> response = new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
         return response;
-//       return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping(value = "/sign_out")
+    public ResponseEntity<GenericResponse<String>> signOut(@RequestHeader("Authorization") String token) {
+        String message = authService.signOut(token);
+        GenericResponse<String> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), message);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
