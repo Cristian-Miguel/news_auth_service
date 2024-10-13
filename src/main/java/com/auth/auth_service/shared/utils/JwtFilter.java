@@ -1,11 +1,16 @@
 package com.auth.auth_service.shared.utils;
 
+import com.auth.auth_service.dto.GenericErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,13 +34,34 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         final String token = getTokenFromRequest(request);
         final String username;
+        final String uri = request.getRequestURI();
+
+        if(token==null && uri.equals("/api/auth/validate")) {
+            handleErrorResponse(response, "Token invalid.",
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
+            return;
+        }
 
         if(token==null){
             filterChain.doFilter(request, response);
             return;
         }
 
-        username = jwtUtils.getUsernameFromToken(token);
+        try {
+            username = jwtUtils.getUsernameFromToken(token);
+        } catch (ExpiredJwtException ex){
+            handleErrorResponse(response, "Token expired.",
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
+            return;
+        } catch (MalformedJwtException ex){
+            handleErrorResponse(response, "Token malformed.",
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
+            return;
+        } catch (Exception ex){
+            handleErrorResponse(response, "Token invalid.",
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
+            return;
+        }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -48,6 +74,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                handleErrorResponse(response, "Token invalid.",
+                        HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
+                return;
             }
         }
 
@@ -62,5 +92,26 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         return null;
+    }
+
+    private void handleErrorResponse(
+            HttpServletResponse response, String message, int status, String error, String uri
+    ) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponse =
+        objectMapper.writeValueAsString(
+                GenericErrorResponse.builder()
+                        .timestamp(null)
+                        .status(status)
+                        .error(error)
+                        .message(message)
+                        .path(uri)
+                        .build()
+        );
+
+        response.getWriter().write(jsonResponse);
     }
 }

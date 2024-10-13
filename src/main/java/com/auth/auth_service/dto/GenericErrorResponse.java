@@ -1,5 +1,6 @@
 package com.auth.auth_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_ABSENT)
 public class GenericErrorResponse {
     private LocalDateTime timestamp;
     private int status;

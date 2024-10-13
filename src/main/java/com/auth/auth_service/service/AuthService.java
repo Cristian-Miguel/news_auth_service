@@ -15,12 +15,14 @@ import com.auth.auth_service.exception.UserAlreadyExistsException;
 import com.auth.auth_service.shared.constant.SystemConstant;
 import com.auth.auth_service.shared.utils.JwtUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -127,6 +129,14 @@ public class AuthService {
             increaseFailedAttempts(user);
             throw new BadUserCredentialsException(errorMessage.BAD_CREDENTIALS);
         }
+    }
+
+    public AuthResponse validateToken(String token){
+        if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+            return new AuthResponse(token.substring(7));
+        }
+
+        return null;
     }
 
     //Sub methods for the service class
