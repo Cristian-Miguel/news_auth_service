@@ -60,6 +60,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @Column(nullable = false, length = 10)
+    private int failAttempts = 0;
+
+    @Column(nullable = true)
+    private LocalDateTime lockTime;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
