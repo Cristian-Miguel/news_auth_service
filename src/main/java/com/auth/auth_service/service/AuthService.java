@@ -6,8 +6,10 @@ import com.auth.auth_service.exception.BadUserCredentialsException;
 import com.auth.auth_service.exception.LockedAccountException;
 import com.auth.auth_service.exception.RoleNotFoundException;
 import com.auth.auth_service.model.Role;
+import com.auth.auth_service.model.TokenBlackList;
 import com.auth.auth_service.model.User;
 import com.auth.auth_service.repository.RoleRepository;
+import com.auth.auth_service.repository.TokenBlackListRepository;
 import com.auth.auth_service.repository.UserRepository;
 import com.auth.auth_service.shared.constant.ErrorMessage;
 import com.auth.auth_service.dto.AuthResponse;
@@ -19,12 +21,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +36,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final TokenBlackListRepository tokenBlackListRepository;
     private final PasswordEncoder passwordEncoder;
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
@@ -137,6 +142,28 @@ public class AuthService {
         }
 
         return null;
+    }
+
+    public String signOut(String token) {
+        token = token.substring(7);
+
+        LocalDateTime expiredDate = jwtUtils.getExpiration(token)
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        final String userToken = jwtUtils.getUsernameFromToken(token);
+
+        User user = userRepository.findByUsername(userToken)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException(errorMessage.buildUsernameDontExistError(userToken))
+                );
+
+        TokenBlackList tokenBlackList = new TokenBlackList(token, expiredDate, user);
+
+        tokenBlackListRepository.save(tokenBlackList);
+
+        return "Successful sign out";
     }
 
     //Sub methods for the service class
