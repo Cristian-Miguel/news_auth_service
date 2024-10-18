@@ -1,8 +1,7 @@
 package com.auth.auth_service.shared.utils;
 
 import com.auth.auth_service.dto.GenericErrorResponse;
-import com.auth.auth_service.model.TokenBlackList;
-import com.auth.auth_service.repository.TokenBlackListRepository;
+import com.auth.auth_service.shared.constant.RoleEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -23,6 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +30,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
-    private final TokenBlackListRepository tokenBlackListRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -51,14 +50,14 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        if(tokenBlackListRepository.existsById(token)){
-            handleErrorResponse(response, "Token invalid.",
-                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
-            return;
-        }
-
         try {
             username = jwtUtils.getUsernameFromToken(token);
+
+            Map<String, Object> claims = jwtUtils.getAllClaims(token);
+
+            RoleEnum role = RoleEnum.valueOf( (String) claims.get("role") );
+            String email = (String) claims.get("email");
+
         } catch (ExpiredJwtException ex){
             handleErrorResponse(response, "Token expired.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), uri);
