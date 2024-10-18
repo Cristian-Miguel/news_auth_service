@@ -6,15 +6,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecureRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -25,6 +26,9 @@ public class JwtUtils {
 
     @Value("${jwt.expired-date}")
     private long EXPIRATE_DATE;
+
+    @Value("${jwt.expired-date-refresh}")
+    private long EXPIRATE_DATE_REFRESH;
 
     public String getToken(User user){
         HashMap<String, Object> claims = new HashMap<>();
@@ -42,6 +46,36 @@ public class JwtUtils {
 //                .signWith(getKey())
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Map<String, Object> getRefreshToken(String uuid, User user){
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("uuid", uuid);
+        return getRefreshToken(claims, user);
+    }
+
+    private Map<String, Object> getRefreshToken(HashMap<String, Object> extraClaims, User user){
+        Map<String, Object> refreshToken = new HashMap<>();
+
+        Date expiredDate = new Date(System.currentTimeMillis()+EXPIRATE_DATE_REFRESH);
+
+        LocalDateTime expired = expiredDate
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        String token = Jwts.builder()
+                .claims(extraClaims)
+                .subject(user.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(expiredDate)
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        refreshToken.put("expired", expired);
+        refreshToken.put("refresh", token);
+
+        return refreshToken;
     }
 
     private SecretKey getKey() {
