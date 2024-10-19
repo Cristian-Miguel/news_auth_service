@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.auth</groupId>
 	<artifactId>auth-service</artifactId>
-	<version>0.4.2-SNAPSHOT</version>
+	<version>0.5.0-SNAPSHOT</version>
 	<name>auth-service</name>
 	<description>Microservice to auth the news app</description>
 	<url/>
@@ -98,6 +98,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>6.3.3</version>
 		</dependency>
 	</dependencies>
 

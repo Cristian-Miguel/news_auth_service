@@ -9,6 +9,8 @@ public class ErrorMessage {
     public final String ROLE_NOT_FOUND = "The role is not in the system.";
     public final String BAD_CREDENTIALS = "Invalid username or password.";
     public final String LOCKED_ACCOUNT = "Your account is locked due to too many failed login attempts. Please try again later.";
+    public final String TOKEN_EXPIRED = "Token has expired.";
+    public final String TOKEN_MALFORMAT = "Token doesn't have the correct format.";
 
     public String buildEmailTakenError(String email){
         return "The email " +
