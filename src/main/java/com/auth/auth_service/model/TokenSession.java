@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.generator.values.GeneratedValues;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +32,7 @@ public class TokenSession {
     @Column(nullable = false)
     private LocalDateTime expiredAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean isRevoked = false;
 
