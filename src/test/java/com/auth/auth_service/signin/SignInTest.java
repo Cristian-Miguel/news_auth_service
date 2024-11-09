@@ -1,14 +1,12 @@
 package com.auth.auth_service.signin;
 
-import com.auth.auth_service.dto.SignInRequest;
-import com.auth.auth_service.dto.SignUpRequest;
-import com.auth.auth_service.exception.UserNotFoundException;
-import com.auth.auth_service.model.User;
-import com.auth.auth_service.repository.UserRepository;
-import com.auth.auth_service.shared.constant.ErrorMessage;
-import com.auth.auth_service.shared.constant.SystemConstant;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
+import com.auth.auth_service.user.domain.exception.UserNotFoundException;
+import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
+import com.auth.auth_service.user.infrastructure.adapter.output.persistence.repository.UserRepository;
+import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
+import com.auth.auth_service.shared.infrastructure.constant.SystemConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -47,7 +44,7 @@ public class SignInTest {
     @Test
     public void successSignIn() throws Exception {
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -153,7 +150,7 @@ public class SignInTest {
     @Test
     public void nullPasswordRequestInSignIn() throws Exception {
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -190,7 +187,7 @@ public class SignInTest {
     @Test
     public void emptyPasswordRequestInSignIn() throws Exception {
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -227,7 +224,7 @@ public class SignInTest {
     @Test
     public void notMatchPasswordRequestInSignIn() throws Exception{
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -265,7 +262,7 @@ public class SignInTest {
     @Test
     public void passAttemptToSignIn() throws Exception{
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -303,7 +300,7 @@ public class SignInTest {
     @Test
     public void signInWhenAccountWasLocked() throws Exception{
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
@@ -341,7 +338,7 @@ public class SignInTest {
     @Test
     public void afterPassTimeToLockAccountForSoManyAttemptsOfSignIn() throws Exception{
         //Change the data in the database to run this error
-        User user = userRepository.findByUsername(usernameExistent)
+        UserEntity user = userRepository.findByUsername(usernameExistent)
                 .orElseThrow(
                         () -> new UserNotFoundException(
                                 em.buildUsernameDontExistError(usernameExistent)
