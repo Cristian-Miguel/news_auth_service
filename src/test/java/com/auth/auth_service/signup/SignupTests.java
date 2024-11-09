@@ -1,9 +1,9 @@
 package com.auth.auth_service.signup;
 
-import com.auth.auth_service.dto.SignUpRequest;
-import com.auth.auth_service.model.User;
-import com.auth.auth_service.repository.UserRepository;
-import com.auth.auth_service.shared.constant.RoleEnum;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignUpRequest;
+import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
+import com.auth.auth_service.user.infrastructure.adapter.output.persistence.repository.UserRepository;
+import com.auth.auth_service.role.infrastructure.constant.RoleEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.Test;
@@ -174,7 +174,7 @@ public class SignupTests {
     @Test
     public void duplicateEmailRequestInSignUp() throws Exception {
         long id = 1;
-        User user = userRepository.findById(id).orElseThrow();
+        UserEntity user = userRepository.findById(id).orElseThrow();
 
         SignUpRequest request = new SignUpRequest(
                 user.getEmail(),
@@ -264,7 +264,7 @@ public class SignupTests {
     @Test
     public void duplicateUsernameRequestInSignUp() throws Exception {
         long id = 1;
-        User user = userRepository.findById(id).orElseThrow();
+        UserEntity user = userRepository.findById(id).orElseThrow();
 
         SignUpRequest request = new SignUpRequest(
                 email,
