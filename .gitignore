@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 /src/main/resources/application.properties
+/etc/kafka/ssl/
 
 ### STS ###
 .apt_generated

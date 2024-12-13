@@ -2,6 +2,7 @@ package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.RefreshTokenUseCase;
 import com.auth.auth_service.auth.application.port.output.TokenSessionOutputPort;
+import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.auth.domain.model.TokenSession;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
 import com.auth.auth_service.auth.domain.exception.BadUserCredentialsException;
@@ -41,7 +42,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         }
     )
     @Override
-    public AuthResponse refreshToken(String refresh){
+    public Authentication refreshToken(String refresh){
 
         try {
 
@@ -56,7 +57,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
             String refreshToken = updateTokenSession(user, refresh);
 
-            return AuthResponse.builder()
+            return Authentication.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
@@ -76,9 +77,9 @@ public class RefreshTokenService implements RefreshTokenUseCase {
     }
 
     @Override
-    public AuthResponse validateToken(String token) {
+    public Authentication validateToken(String token) {
         if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
-            return new AuthResponse(token.substring(7), null);
+            return new Authentication(token.substring(7), null);
         }
 
         return null;

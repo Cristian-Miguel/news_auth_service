@@ -1,6 +1,7 @@
 package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.SignInUseCase;
+import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
 import com.auth.auth_service.auth.domain.exception.BadUserCredentialsException;
@@ -36,7 +37,7 @@ public class SignInService implements SignInUseCase {
         }
     )
     @Override
-    public AuthResponse signIn(User user){
+    public Authentication signIn(User user){
 
         User userComplete = userOutputPort.findByUsername(
                 user.getUsername()
@@ -67,7 +68,7 @@ public class SignInService implements SignInUseCase {
 
             String accessToken = jwtUtils.getToken(userComplete);
 
-            return AuthResponse.builder()
+            return Authentication.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();

@@ -1,6 +1,7 @@
 package com.auth.auth_service.shared.infrastructure.adapter.output.customizedexception;
 
 import com.auth.auth_service.shared.infrastructure.adapter.input.rest.data.response.GenericErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

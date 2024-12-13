@@ -1,16 +1,19 @@
 package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.SignUpUseCase;
+import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
 import com.auth.auth_service.role.application.port.output.RoleOutputPort;
 import com.auth.auth_service.role.domain.exception.RoleNotFoundException;
 import com.auth.auth_service.role.domain.model.Role;
 import com.auth.auth_service.role.infrastructure.constant.RoleEnum;
+import com.auth.auth_service.user.application.port.output.UserEventPublisher;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.domain.exception.UserAlreadyExistsException;
 import com.auth.auth_service.user.domain.model.User;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
+import com.auth.auth_service.user.infrastructure.constant.UserEventType;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +30,11 @@ public class SignUpService implements SignUpUseCase {
     private final PasswordEncoder passwordEncoder;
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
+    private final UserEventPublisher userEventPublisher;
 
     @Transactional
     @Override
-    public AuthResponse signUp(User user) {
+    public Authentication signUp(User user) {
 
         validateRequest(user);
 
@@ -51,7 +55,9 @@ public class SignUpService implements SignUpUseCase {
         String accessToken = jwtUtils.getToken(user);
         String refreshToken = refreshTokenService.createTokenSession(user);
 
-        return AuthResponse.builder()
+        userEventPublisher.publishUserUpdatesEvent(user, UserEventType.USER_CREATED);
+
+        return Authentication.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

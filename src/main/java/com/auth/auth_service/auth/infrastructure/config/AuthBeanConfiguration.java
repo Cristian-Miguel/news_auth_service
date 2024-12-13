@@ -12,6 +12,7 @@ import com.auth.auth_service.role.application.port.output.RoleOutputPort;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.EncryptionUtil;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
+import com.auth.auth_service.user.application.port.output.UserEventPublisher;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.mapper.UserPersistenceMapper;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +60,8 @@ public class AuthBeanConfiguration {
             final RefreshTokenService refreshTokenService,
             final PasswordEncoder passwordEncoder,
             final ErrorMessage errorMessage,
-            final JwtUtils jwtUtils
+            final JwtUtils jwtUtils,
+            final UserEventPublisher userEventPublisher
             ){
         return new SignUpService(
                 userOutputPort,
@@ -67,7 +69,8 @@ public class AuthBeanConfiguration {
                 refreshTokenService,
                 passwordEncoder,
                 errorMessage,
-                jwtUtils
+                jwtUtils,
+                userEventPublisher
         );
     }
 
