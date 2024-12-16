@@ -1,6 +1,10 @@
 package com.auth.auth_service.user.infrastructure.config;
 
+import com.auth.auth_service.user.application.port.input.UserCreateUseCase;
+import com.auth.auth_service.user.application.port.input.UserDeleteUseCase;
+import com.auth.auth_service.user.application.port.input.UserUpdateUseCase;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
+import com.auth.auth_service.user.application.service.UserEventService;
 import com.auth.auth_service.user.infrastructure.adapter.input.eventlistener.KafkaUserEventListenerAdapter;
 import com.auth.auth_service.user.infrastructure.adapter.output.eventpublisher.KafkaUserEventPublisherAdapter;
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.UserPersistenceAdapter;
@@ -36,10 +40,20 @@ public class UserBeanConfiguration {
 
     @Bean
     public KafkaUserEventListenerAdapter userEventListenerAdapter(
-            final UserOutputPort userOutputPort,
             final ObjectMapper objectMapper,
-            final UserPersistenceMapper userPersistenceMapper
+            final UserCreateUseCase userCreateUseCase,
+            final UserUpdateUseCase userUpdateUseCase,
+            final UserDeleteUseCase userDeleteUseCase
+            ){
+        return new KafkaUserEventListenerAdapter(objectMapper, userCreateUseCase, userUpdateUseCase, userDeleteUseCase);
+    }
+
+    @Bean
+    public UserEventService userEventService(
+        final ObjectMapper objectMapper,
+        final UserOutputPort userOutputPort,
+        final UserPersistenceMapper userPersistenceMapper
     ){
-        return new KafkaUserEventListenerAdapter(objectMapper, userOutputPort, userPersistenceMapper);
+        return new UserEventService(objectMapper, userOutputPort, userPersistenceMapper);
     }
 }
