@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: auth-service
+  config:
+    import: configserver:http://localhost:0000
+  cloud:
+    config:
+      uri: http://localhost:0000
+      username: {username}
+      password: {password}

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenericResponse<T> {
+public class GenericResponse<M> {
 
     private boolean success;
     private String message;
-    private T data;
+    private M data;
 }

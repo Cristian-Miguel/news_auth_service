@@ -61,8 +61,7 @@ public class AuthController {
         headers.set("Authorization", "Bearer " + authComponents.getAccessToken());
         GenericResponse<AuthResponse> responseBody = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authComponents);
 
-        ResponseEntity<GenericResponse<AuthResponse>> response = new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
-        return response;
+        return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
     }
 
     @PostMapping(value = "/sign_out")

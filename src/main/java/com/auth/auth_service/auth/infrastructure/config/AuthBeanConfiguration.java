@@ -80,14 +80,16 @@ public class AuthBeanConfiguration {
             final RefreshTokenService refreshTokenService,
             final ErrorMessage errorMessage,
             final JwtUtils jwtUtils,
-            final AuthenticationManager authenticationManager
+            final AuthenticationManager authenticationManager,
+            final UserEventPublisher userEventPublisher
     ){
         return new SignInService(
                 userOutputPort,
                 refreshTokenService,
                 errorMessage,
                 jwtUtils,
-                authenticationManager
+                authenticationManager,
+                userEventPublisher
         );
 
     }

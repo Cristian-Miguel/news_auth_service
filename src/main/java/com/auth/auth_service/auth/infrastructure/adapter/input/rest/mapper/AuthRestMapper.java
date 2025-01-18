@@ -14,7 +14,7 @@ public interface AuthRestMapper {
 
     User toUser(SignInRequest signInRequest);
 
-    Authentication toAuthentication(AuthResponse authResponse);
+//    Authentication toAuthentication(AuthResponse authResponse);
 
     AuthResponse toAuthResponse(Authentication authentication);
 }
