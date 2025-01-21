@@ -1,7 +1,6 @@
 package com.auth.auth_service.shared.infrastructure.utils;
 
 import com.auth.auth_service.user.domain.model.User;
-import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

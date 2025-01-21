@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ public class UserUpdateEvent {
 
     private LocalDate birthDate;
 
+    @Default
     private int failAttempts = 0;
 
     private LocalDateTime lockTime;

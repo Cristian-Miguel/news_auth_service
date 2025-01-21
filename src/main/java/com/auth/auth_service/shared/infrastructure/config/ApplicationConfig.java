@@ -1,7 +1,5 @@
 package com.auth.auth_service.shared.infrastructure.config;
 
-import com.auth.auth_service.user.application.port.output.UserOutputPort;
-import com.auth.auth_service.user.domain.model.User;
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.repository.UserRepository;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import lombok.AllArgsConstructor;

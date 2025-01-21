@@ -1,10 +1,9 @@
 package com.auth.auth_service.auth.infrastructure.config;
 
+import com.auth.auth_service.auth.application.port.output.ResetPasswordPublisherEvent;
 import com.auth.auth_service.auth.application.port.output.TokenSessionOutputPort;
-import com.auth.auth_service.auth.application.service.RefreshTokenService;
-import com.auth.auth_service.auth.application.service.SignInService;
-import com.auth.auth_service.auth.application.service.SignOutService;
-import com.auth.auth_service.auth.application.service.SignUpService;
+import com.auth.auth_service.auth.application.service.*;
+import com.auth.auth_service.auth.infrastructure.adapter.output.eventpublisher.KafkaResetPasswordEventPublisherAdapter;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.TokenSessionPersistenceAdapter;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.mapper.TokenSessionPersistenceMapper;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.repository.TokenSessionRepository;
@@ -15,8 +14,10 @@ import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
 import com.auth.auth_service.user.application.port.output.UserEventPublisher;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.mapper.UserPersistenceMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -106,6 +107,32 @@ public class AuthBeanConfiguration {
                 tokenSessionOutputPort,
                 errorMessage,
                 jwtUtils
+        );
+    }
+
+    @Bean
+    public ResetPasswordService resetPasswordService(
+        final ErrorMessage errorMessage,
+        final JwtUtils jwtUtils,
+        final UserOutputPort userOutputPort,
+        final ResetPasswordPublisherEvent resetPasswordEvent
+    ) {
+        return new ResetPasswordService(
+                errorMessage,
+                jwtUtils,
+                userOutputPort,
+                resetPasswordEvent
+        );
+    }
+
+    @Bean
+    public KafkaResetPasswordEventPublisherAdapter kafkaResetPasswordEventPublisherAdapter(
+            final KafkaTemplate<String, String> kafkaTemplate,
+            final ObjectMapper objectMapper
+    ) {
+        return new KafkaResetPasswordEventPublisherAdapter(
+          kafkaTemplate,
+          objectMapper
         );
     }
 

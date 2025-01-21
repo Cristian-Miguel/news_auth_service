@@ -1,10 +1,8 @@
 package com.auth.auth_service.auth.infrastructure.adapter.input.rest;
 
-import com.auth.auth_service.auth.application.port.input.RefreshTokenUseCase;
-import com.auth.auth_service.auth.application.port.input.SignInUseCase;
-import com.auth.auth_service.auth.application.port.input.SignOutUseCase;
-import com.auth.auth_service.auth.application.port.input.SignUpUseCase;
+import com.auth.auth_service.auth.application.port.input.*;
 import com.auth.auth_service.auth.domain.model.Authentication;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SendResetPasswordRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignUpRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
@@ -27,6 +25,7 @@ public class AuthController {
     private final SignInUseCase signInUseCase;
     private final SignOutUseCase signOutUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
+    private final ResetPasswordCaseUse resetPasswordCaseUse;
 
     private final AuthRestMapper authRestMapper;
 
@@ -81,4 +80,15 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PostMapping(value = "/send_reset_password_email")
+    public ResponseEntity<GenericResponse<String>> sendResetPasswordByEmail(@RequestBody SendResetPasswordRequest request) {
+        User user = authRestMapper.toUser(request);
+        String result = resetPasswordCaseUse.sendResetPasswordByEmail(user);
+
+        GenericResponse<String> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), result);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 }
