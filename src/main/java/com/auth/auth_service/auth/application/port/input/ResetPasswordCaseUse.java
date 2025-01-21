@@ -6,4 +6,6 @@ public interface ResetPasswordCaseUse {
 
     String sendResetPasswordByEmail(User user);
 
+    String resetPasswordValidated(User user, String token);
+
 }

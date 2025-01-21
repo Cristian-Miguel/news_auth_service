@@ -115,13 +115,17 @@ public class AuthBeanConfiguration {
         final ErrorMessage errorMessage,
         final JwtUtils jwtUtils,
         final UserOutputPort userOutputPort,
-        final ResetPasswordPublisherEvent resetPasswordEvent
+        final ResetPasswordPublisherEvent resetPasswordEvent,
+        final PasswordEncoder passwordEncoder,
+        final UserEventPublisher userEventPublisher
     ) {
         return new ResetPasswordService(
                 errorMessage,
                 jwtUtils,
                 userOutputPort,
-                resetPasswordEvent
+                resetPasswordEvent,
+                passwordEncoder,
+                userEventPublisher
         );
     }
 

@@ -2,6 +2,7 @@ package com.auth.auth_service.auth.infrastructure.adapter.input.rest;
 
 import com.auth.auth_service.auth.application.port.input.*;
 import com.auth.auth_service.auth.domain.model.Authentication;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.ResetPasswordValidateRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SendResetPasswordRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignUpRequest;
@@ -85,6 +86,18 @@ public class AuthController {
     public ResponseEntity<GenericResponse<String>> sendResetPasswordByEmail(@RequestBody SendResetPasswordRequest request) {
         User user = authRestMapper.toUser(request);
         String result = resetPasswordCaseUse.sendResetPasswordByEmail(user);
+
+        GenericResponse<String> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), result);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping(value = "/reset_password_validated")
+    public ResponseEntity<GenericResponse<String>> resetPasswordValidated(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ResetPasswordValidateRequest request) {
+        User user = authRestMapper.toUser(request);
+        String result = resetPasswordCaseUse.resetPasswordValidated(user, token);
 
         GenericResponse<String> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), result);
 
