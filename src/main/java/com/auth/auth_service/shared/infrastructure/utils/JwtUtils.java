@@ -25,27 +25,19 @@ public class JwtUtils {
     private String SECRET_KEY;
 
     @Value("${jwt.expired-date}")
-    private long EXPIRATE_DATE;
+    private long EXPIRED_DATE;
 
     @Value("${jwt.expired-date-refresh}")
-    private long EXPIRATE_DATE_REFRESH;
+    private long EXPIRED_DATE_REFRESH;
+
+    @Value("${jwt.expired-date-email-validate}")
+    private long EXPIRED_DATE_EMAIL_VALIDATE;
 
     public String getToken(User user){
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole().getEnumName());
-        return getToken(claims, user);
-    }
-
-    private String getToken(HashMap<String, Object> extraClaims, User user) {
-        return Jwts.builder()
-                .claims(extraClaims)
-                .subject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+EXPIRATE_DATE))
-//                .signWith(getKey())
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+        return getToken(claims, user, new Date(System.currentTimeMillis()+EXPIRED_DATE));
     }
 
     public Map<String, Object> getRefreshToken(String uuid, User user){
@@ -54,23 +46,34 @@ public class JwtUtils {
         return getRefreshToken(claims, user);
     }
 
+    public String getTokenToValidateEmail(User user){
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        return getToken(claims, user, new Date(System.currentTimeMillis()+EXPIRED_DATE_EMAIL_VALIDATE));
+    }
+
+    private String getToken(HashMap<String, Object> extraClaims, User user, Date expired) {
+        return Jwts.builder()
+                .claims(extraClaims)
+                .subject(user.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(expired)
+//                .signWith(getKey())
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     private Map<String, Object> getRefreshToken(HashMap<String, Object> extraClaims, User user){
         Map<String, Object> refreshToken = new HashMap<>();
 
-        Date expiredDate = new Date(System.currentTimeMillis()+EXPIRATE_DATE_REFRESH);
+        Date expiredDate = new Date(System.currentTimeMillis()+EXPIRED_DATE_REFRESH);
 
         LocalDateTime expired = expiredDate
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
-        String token = Jwts.builder()
-                .claims(extraClaims)
-                .subject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(expiredDate)
-                .signWith(getKey(), SignatureAlgorithm.HS256)
-                .compact();
+        String token = getToken(extraClaims, user, expiredDate);
 
         refreshToken.put("expired", expired);
         refreshToken.put("refresh", token);

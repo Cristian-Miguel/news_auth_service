@@ -43,4 +43,8 @@ public class User {
 
     private LocalDateTime lockTime;
 
+    @Builder.Default
+    private boolean isValidatedEmail = false;
+
+
 }

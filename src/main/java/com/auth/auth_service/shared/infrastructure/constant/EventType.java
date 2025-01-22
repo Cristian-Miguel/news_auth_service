@@ -5,6 +5,8 @@ public enum EventType {
     USER_CREATED,
     USER_UPDATE,
     USER_DELETE,
-    RESET_PASSWORD;
+    RESET_PASSWORD,
+    VALIDATE_EMAIL
+    ;
 
 }

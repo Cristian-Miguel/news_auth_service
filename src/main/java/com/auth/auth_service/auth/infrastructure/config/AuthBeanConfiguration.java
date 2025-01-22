@@ -1,9 +1,12 @@
 package com.auth.auth_service.auth.infrastructure.config;
 
+import com.auth.auth_service.auth.application.port.input.VerifiedEmailUseCase;
 import com.auth.auth_service.auth.application.port.output.ResetPasswordPublisherEvent;
 import com.auth.auth_service.auth.application.port.output.TokenSessionOutputPort;
+import com.auth.auth_service.auth.application.port.output.ValidateEmailPublisherEvent;
 import com.auth.auth_service.auth.application.service.*;
 import com.auth.auth_service.auth.infrastructure.adapter.output.eventpublisher.KafkaResetPasswordEventPublisherAdapter;
+import com.auth.auth_service.auth.infrastructure.adapter.output.eventpublisher.KafkaValidateEmailEventPublisherAdapter;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.TokenSessionPersistenceAdapter;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.mapper.TokenSessionPersistenceMapper;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.repository.TokenSessionRepository;
@@ -62,7 +65,8 @@ public class AuthBeanConfiguration {
             final PasswordEncoder passwordEncoder,
             final ErrorMessage errorMessage,
             final JwtUtils jwtUtils,
-            final UserEventPublisher userEventPublisher
+            final UserEventPublisher userEventPublisher,
+            final VerifiedEmailUseCase verifiedEmailUseCase
             ){
         return new SignUpService(
                 userOutputPort,
@@ -71,7 +75,8 @@ public class AuthBeanConfiguration {
                 passwordEncoder,
                 errorMessage,
                 jwtUtils,
-                userEventPublisher
+                userEventPublisher,
+                verifiedEmailUseCase
         );
     }
 
@@ -130,6 +135,23 @@ public class AuthBeanConfiguration {
     }
 
     @Bean
+    public VerifiedEmailService verifiedEmailService(
+            final ErrorMessage errorMessage,
+            final UserOutputPort userOutputPort,
+            final UserEventPublisher userEventPublisher,
+            final JwtUtils jwtUtils,
+            final ValidateEmailPublisherEvent validateEmailPublisherEvent
+            ){
+        return new VerifiedEmailService(
+                errorMessage,
+                userOutputPort,
+                userEventPublisher,
+                jwtUtils,
+                validateEmailPublisherEvent
+        );
+    }
+
+    @Bean
     public KafkaResetPasswordEventPublisherAdapter kafkaResetPasswordEventPublisherAdapter(
             final KafkaTemplate<String, String> kafkaTemplate,
             final ObjectMapper objectMapper
@@ -137,6 +159,17 @@ public class AuthBeanConfiguration {
         return new KafkaResetPasswordEventPublisherAdapter(
           kafkaTemplate,
           objectMapper
+        );
+    }
+
+    @Bean
+    public KafkaValidateEmailEventPublisherAdapter kafkaValidateEmailEventPublisherAdapter(
+            final KafkaTemplate<String, String> kafkaTemplate,
+            final ObjectMapper objectMapper
+    ){
+        return new KafkaValidateEmailEventPublisherAdapter(
+                kafkaTemplate,
+                objectMapper
         );
     }
 

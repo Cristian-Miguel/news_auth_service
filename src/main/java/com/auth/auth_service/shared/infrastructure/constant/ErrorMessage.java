@@ -10,6 +10,7 @@ public class ErrorMessage {
     public final String LOCKED_ACCOUNT = "Your account is locked due to too many failed login attempts. Please try again later.";
     public final String TOKEN_EXPIRED = "Token has expired.";
     public final String TOKEN_MALFORMAT = "Token doesn't have the correct format.";
+    public final String EMAIL_VALIDATED = "Email has already been validated.";
 
     public String buildEmailTakenError(String email){
         return "The email " +
