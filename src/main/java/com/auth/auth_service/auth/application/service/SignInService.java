@@ -1,17 +1,16 @@
 package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.SignInUseCase;
-import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
-import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
+import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.auth.domain.exception.BadUserCredentialsException;
 import com.auth.auth_service.auth.domain.exception.LockedAccountException;
+import com.auth.auth_service.user.application.port.output.UserEventPublisher;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.domain.model.User;
-import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
-import com.auth.auth_service.user.infrastructure.adapter.output.persistence.repository.UserRepository;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.constant.SystemConstant;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
+import com.auth.auth_service.shared.infrastructure.constant.EventType;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +27,7 @@ public class SignInService implements SignInUseCase {
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
+    private final UserEventPublisher userEventPublisher;
 
     @Transactional(noRollbackFor = {
             BadUserCredentialsException.class,
@@ -36,7 +36,7 @@ public class SignInService implements SignInUseCase {
         }
     )
     @Override
-    public AuthResponse signIn(User user){
+    public Authentication signIn(User user){
 
         User userComplete = userOutputPort.findByUsername(
                 user.getUsername()
@@ -67,7 +67,7 @@ public class SignInService implements SignInUseCase {
 
             String accessToken = jwtUtils.getToken(userComplete);
 
-            return AuthResponse.builder()
+            return Authentication.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
@@ -104,17 +104,20 @@ public class SignInService implements SignInUseCase {
         }
 
         userOutputPort.saveUser(user);
+        userEventPublisher.publishUserUpdatesEvent(user, EventType.USER_UPDATE);
     }
 
     private void resetFailedAttempts(User user) {
         user.setFailAttempts(0);
         user.setLockTime(null); // Unlock account
         userOutputPort.saveUser(user);
+        userEventPublisher.publishUserUpdatesEvent(user, EventType.USER_UPDATE);
     }
 
     private void unlockAccount(User user) {
         user.setFailAttempts(0);
         user.setLockTime(null); // Unlock account
         userOutputPort.saveUser(user);
+        userEventPublisher.publishUserUpdatesEvent(user, EventType.USER_UPDATE);
     }
 }

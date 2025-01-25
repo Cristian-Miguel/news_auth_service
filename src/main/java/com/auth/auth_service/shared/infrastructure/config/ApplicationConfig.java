@@ -1,8 +1,10 @@
 package com.auth.auth_service.shared.infrastructure.config;
 
+import com.auth.auth_service.user.application.port.output.UserOutputPort;
+import com.auth.auth_service.user.domain.model.User;
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.repository.UserRepository;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,10 +17,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+//    private final UserOutputPort userOutputPort;
     private final ErrorMessage errorMessage;
 
     @Bean

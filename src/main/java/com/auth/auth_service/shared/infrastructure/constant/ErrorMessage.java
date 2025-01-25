@@ -1,9 +1,9 @@
 package com.auth.auth_service.shared.infrastructure.constant;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class ErrorMessage {
 
     public final String ROLE_NOT_FOUND = "The role is not in the system.";

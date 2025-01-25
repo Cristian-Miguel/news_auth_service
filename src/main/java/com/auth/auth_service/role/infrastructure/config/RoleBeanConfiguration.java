@@ -10,8 +10,14 @@ import org.springframework.context.annotation.Configuration;
 public class RoleBeanConfiguration {
 
     @Bean
-    public RolePersistenceAdapter rolePersistenceAdapter(final RoleRepository roleRepository, final RolePersistenceMapper rolePersistenceMapper){
-        return new RolePersistenceAdapter(roleRepository, rolePersistenceMapper);
+    public RolePersistenceAdapter rolePersistenceAdapter(
+            final RoleRepository roleRepository,
+            final RolePersistenceMapper rolePersistenceMapper
+    ){
+        return new RolePersistenceAdapter(
+                roleRepository,
+                rolePersistenceMapper
+        );
     }
 
 }

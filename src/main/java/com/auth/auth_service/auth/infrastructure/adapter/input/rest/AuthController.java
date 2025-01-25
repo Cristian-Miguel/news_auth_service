@@ -4,6 +4,7 @@ import com.auth.auth_service.auth.application.port.input.RefreshTokenUseCase;
 import com.auth.auth_service.auth.application.port.input.SignInUseCase;
 import com.auth.auth_service.auth.application.port.input.SignOutUseCase;
 import com.auth.auth_service.auth.application.port.input.SignUpUseCase;
+import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignUpRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
@@ -32,8 +33,10 @@ public class AuthController {
     @PostMapping(value = "/sign_up")
     public ResponseEntity<GenericResponse<AuthResponse>> signUp(@RequestBody @Valid SignUpRequest request) {
         User user = authRestMapper.toUser(request);
-        AuthResponse token = signUpUseCase.signUp(user);
-        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.CREATED.getReasonPhrase(), token);
+        Authentication result = signUpUseCase.signUp(user);
+        AuthResponse authComponents = authRestMapper.toAuthResponse(result);
+
+        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.CREATED.getReasonPhrase(), authComponents);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -41,21 +44,24 @@ public class AuthController {
     @PostMapping(value = "/sign_in")
     public ResponseEntity<GenericResponse<AuthResponse>> signIn(@RequestBody @Valid SignInRequest request) {
         User user = authRestMapper.toUser(request);
-        AuthResponse token = signInUseCase.signIn(user);
-        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), token);
+        Authentication result = signInUseCase.signIn(user);
+        AuthResponse authComponents = authRestMapper.toAuthResponse(result);
+
+        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authComponents);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping(value = "/validate")
-    public ResponseEntity<GenericResponse<AuthResponse>> validateToken(@RequestHeader("Authorization") String token){
-        AuthResponse authToken = refreshTokenUseCase.validateToken(token);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + authToken.getAccessToken());
-        GenericResponse<AuthResponse> responseBody = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authToken);
+    public ResponseEntity<GenericResponse<AuthResponse>> validateToken(@RequestHeader("Authorization") String token) {
+        Authentication result = refreshTokenUseCase.validateToken(token);
+        AuthResponse authComponents = authRestMapper.toAuthResponse(result);
 
-        ResponseEntity<GenericResponse<AuthResponse>> response = new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
-        return response;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + authComponents.getAccessToken());
+        GenericResponse<AuthResponse> responseBody = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authComponents);
+
+        return new ResponseEntity<>(responseBody, headers, HttpStatus.OK);
     }
 
     @PostMapping(value = "/sign_out")
@@ -67,10 +73,11 @@ public class AuthController {
     }
 
     @PostMapping(value = "/refresh_token")
-    public ResponseEntity<GenericResponse<AuthResponse>> refreshToken(@RequestBody AuthResponse request){
-        AuthResponse authResponse = refreshTokenUseCase.refreshToken(request.getRefreshToken());
+    public ResponseEntity<GenericResponse<AuthResponse>> refreshToken(@RequestBody AuthResponse request) {
+        Authentication result = refreshTokenUseCase.refreshToken(request.getRefreshToken());
+        AuthResponse authComponents = authRestMapper.toAuthResponse(result);
 
-        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authResponse);
+        GenericResponse<AuthResponse> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), authComponents);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

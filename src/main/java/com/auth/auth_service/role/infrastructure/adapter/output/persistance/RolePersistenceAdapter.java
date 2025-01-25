@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+//@AllArgsConstructor
+//@Component
 public class RolePersistenceAdapter implements RoleOutputPort {
 
     private final RoleRepository roleRepository;
