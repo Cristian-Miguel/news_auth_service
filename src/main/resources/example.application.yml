@@ -1,10 +1,10 @@
 spring:
   application:
-    name: auth-service
+    name: user-service
   config:
-    import: configserver:http://localhost:0000
+    import: CONFIG_IMPORT
   cloud:
     config:
-      uri: http://localhost:0000
-      username: {username}
-      password: {password}
+      uri: CONFIG_URI
+      username: CONFIG_USER
+      password: CONFIG_PASSWORD
