@@ -1,11 +1,11 @@
 package com.auth.auth_service.user.domain.event;
 
 import com.auth.auth_service.role.domain.model.Role;
-import com.auth.auth_service.user.domain.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +40,7 @@ public class UserCreatedEvent {
 
     private LocalDate birthDate;
 
+    @Default
     private int failAttempts = 0;
 
     private LocalDateTime lockTime;

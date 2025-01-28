@@ -1,6 +1,5 @@
 package com.auth.auth_service.shared.infrastructure.constant;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -44,6 +43,14 @@ public class ErrorMessage {
         return "The username " +
                 "'" +
                 username +
+                "'" +
+                " isn't exist in the system.";
+    }
+
+    public String buildEmailDontExistError(String email){
+        return "The email " +
+                "'" +
+                email +
                 "'" +
                 " isn't exist in the system.";
     }

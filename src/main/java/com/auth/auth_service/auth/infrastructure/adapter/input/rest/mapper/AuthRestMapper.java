@@ -1,6 +1,8 @@
 package com.auth.auth_service.auth.infrastructure.adapter.input.rest.mapper;
 
 import com.auth.auth_service.auth.domain.model.Authentication;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.ResetPasswordValidateRequest;
+import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SendResetPasswordRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignInRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.request.SignUpRequest;
 import com.auth.auth_service.auth.infrastructure.adapter.input.rest.data.response.AuthResponse;
@@ -14,7 +16,9 @@ public interface AuthRestMapper {
 
     User toUser(SignInRequest signInRequest);
 
-//    Authentication toAuthentication(AuthResponse authResponse);
+    User toUser(SendResetPasswordRequest sendResetPasswordRequest);
+
+    User toUser(ResetPasswordValidateRequest resetPasswordValidateRequest);
 
     AuthResponse toAuthResponse(Authentication authentication);
 }

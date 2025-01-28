@@ -30,7 +30,8 @@ public class SecurityConfig {
                                "/api/auth/sign_up",
                                         "/api/auth/sign_in",
                                         "/api/auth/sign_out",
-                                        "/api/auth/refresh_token"
+                                        "/api/auth/refresh_token",
+                                        "/api/auth/send_reset_password_email"
                                         ).permitAll()
                                     .anyRequest().authenticated()
                 )

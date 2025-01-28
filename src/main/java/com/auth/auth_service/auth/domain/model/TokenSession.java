@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ public class TokenSession {
 
     private LocalDateTime expiredAt;
 
+    @Default
     private boolean isRevoked = false;
 
     private User user;
