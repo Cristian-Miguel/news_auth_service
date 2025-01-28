@@ -1,6 +1,9 @@
 package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.SignUpUseCase;
+import com.auth.auth_service.auth.application.port.input.VerifiedEmailUseCase;
+import com.auth.auth_service.auth.application.port.output.ValidateEmailPublisherEvent;
+import com.auth.auth_service.auth.domain.event.ValidateEmailEvent;
 import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.role.application.port.output.RoleOutputPort;
 import com.auth.auth_service.role.domain.exception.RoleNotFoundException;
@@ -30,6 +33,7 @@ public class SignUpService implements SignUpUseCase {
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
     private final UserEventPublisher userEventPublisher;
+    private final VerifiedEmailUseCase verifiedEmailUseCase;
 
     @Transactional
     @Override
@@ -55,6 +59,8 @@ public class SignUpService implements SignUpUseCase {
         String refreshToken = refreshTokenService.createTokenSession(user);
 
         userEventPublisher.publishUserUpdatesEvent(user, EventType.USER_CREATED);
+
+        verifiedEmailUseCase.validateEmail(user);
 
         return Authentication.builder()
                 .accessToken(accessToken)

@@ -3,7 +3,6 @@ package com.auth.auth_service.auth.application.service;
 import com.auth.auth_service.auth.application.port.input.ResetPasswordCaseUse;
 import com.auth.auth_service.auth.application.port.output.ResetPasswordPublisherEvent;
 import com.auth.auth_service.auth.domain.event.ResetPasswordEvent;
-import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.constant.EventType;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
