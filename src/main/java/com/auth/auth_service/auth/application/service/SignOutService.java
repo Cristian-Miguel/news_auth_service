@@ -71,7 +71,7 @@ public class SignOutService implements SignOutUseCase {
                 tokenSessionOutputPort.saveTokenSession(sessionDevice);
             }
 
-            return "Successful sign out";
+            return "Successful sign out all session";
 
         } catch (ExpiredJwtException ex) {
             throw new BadUserCredentialsException(errorMessage.TOKEN_EXPIRED);

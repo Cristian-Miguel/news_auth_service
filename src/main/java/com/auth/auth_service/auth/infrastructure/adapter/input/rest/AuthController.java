@@ -72,6 +72,14 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @PostMapping(value = "/sign_out_all")
+    public ResponseEntity<GenericResponse<String>> signOutAllSession(@RequestBody AuthResponse request) {
+        String message = signOutUseCase.signOutAllSession(request.getRefreshToken());
+        GenericResponse<String> response = new GenericResponse<>(true, HttpStatus.OK.getReasonPhrase(), message);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PostMapping(value = "/refresh_token")
     public ResponseEntity<GenericResponse<AuthResponse>> refreshToken(@RequestBody AuthResponse request) {
         Authentication result = refreshTokenUseCase.refreshToken(request.getRefreshToken());
