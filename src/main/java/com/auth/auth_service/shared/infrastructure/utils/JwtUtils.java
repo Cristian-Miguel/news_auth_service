@@ -6,9 +6,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecureDigestAlgorithm;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
+@Component
 public class JwtUtils {
 
     @Value("${jwt.secret-key}")
@@ -32,6 +34,8 @@ public class JwtUtils {
 
     @Value("${jwt.expired-date-email-validate}")
     private long EXPIRED_DATE_EMAIL_VALIDATE;
+
+    private static final SecureDigestAlgorithm<SecretKey, ?> algorithm = Jwts.SIG.HS256;
 
     public String getToken(User user){
         HashMap<String, Object> claims = new HashMap<>();
@@ -58,8 +62,7 @@ public class JwtUtils {
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(expired)
-//                .signWith(getKey())
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .signWith(getKey(), algorithm)
                 .compact();
     }
 

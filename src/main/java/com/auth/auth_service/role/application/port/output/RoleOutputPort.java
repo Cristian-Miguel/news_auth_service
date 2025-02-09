@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface RoleOutputPort {
 
     Optional<Role> findByEnumName(RoleEnum enumName);
+
+    Role saveUser(Role role);
 }

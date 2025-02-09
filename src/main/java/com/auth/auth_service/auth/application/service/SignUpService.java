@@ -2,8 +2,6 @@ package com.auth.auth_service.auth.application.service;
 
 import com.auth.auth_service.auth.application.port.input.SignUpUseCase;
 import com.auth.auth_service.auth.application.port.input.VerifiedEmailUseCase;
-import com.auth.auth_service.auth.application.port.output.ValidateEmailPublisherEvent;
-import com.auth.auth_service.auth.domain.event.ValidateEmailEvent;
 import com.auth.auth_service.auth.domain.model.Authentication;
 import com.auth.auth_service.role.application.port.output.RoleOutputPort;
 import com.auth.auth_service.role.domain.exception.RoleNotFoundException;

@@ -6,6 +6,8 @@ import com.auth.auth_service.role.infrastructure.adapter.output.persistance.enti
 import com.auth.auth_service.role.infrastructure.adapter.output.persistance.mapper.RolePersistenceMapper;
 import com.auth.auth_service.role.infrastructure.adapter.output.persistance.repository.RoleRepository;
 import com.auth.auth_service.role.infrastructure.constant.RoleEnum;
+import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
+
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
@@ -28,5 +30,13 @@ public class RolePersistenceAdapter implements RoleOutputPort {
         final Role role =  rolePersistenceMapper.toRole(roleEntity.get());
 
         return Optional.of(role);
+    }
+
+    @Override
+    public Role saveUser(Role role) {
+        RoleEntity roleEntity = rolePersistenceMapper.toRoleEntity(role);
+        roleEntity = roleRepository.save(roleEntity);
+
+        return rolePersistenceMapper.toRole(roleEntity);
     }
 }
