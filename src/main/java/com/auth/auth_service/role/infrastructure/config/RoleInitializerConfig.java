@@ -1,8 +1,5 @@
 package com.auth.auth_service.role.infrastructure.config;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +19,12 @@ public class RoleInitializerConfig implements CommandLineRunner {
     public void run(String... args) {
         
         for (RoleEnum roleEnum : RoleEnum.values()) {
-            rolePersistenceAdapter.findByEnumName(roleEnum)
-            .orElse(saveRole(roleEnum));
-            ;
+            Role role = rolePersistenceAdapter.findByEnumName(roleEnum)
+            .orElse(null);
+
+            if (role == null) {
+                saveRole(roleEnum);
+            }
         }
         
         System.out.println("✅ Roles initialized successfully.");

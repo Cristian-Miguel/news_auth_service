@@ -6,7 +6,6 @@ import com.auth.auth_service.role.infrastructure.adapter.output.persistance.enti
 import com.auth.auth_service.role.infrastructure.adapter.output.persistance.mapper.RolePersistenceMapper;
 import com.auth.auth_service.role.infrastructure.adapter.output.persistance.repository.RoleRepository;
 import com.auth.auth_service.role.infrastructure.constant.RoleEnum;
-import com.auth.auth_service.user.infrastructure.adapter.output.persistence.entity.UserEntity;
 
 import lombok.RequiredArgsConstructor;
 
