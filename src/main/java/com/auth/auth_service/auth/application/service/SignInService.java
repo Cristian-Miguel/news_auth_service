@@ -36,14 +36,14 @@ public class SignInService implements SignInUseCase {
         }
     )
     @Override
-    public Authentication signIn(User user){
+    public Authentication signIn(User user) {
 
         User userComplete = userOutputPort.findByUsername(
                 user.getUsername()
         ).orElseThrow(
-                () -> new BadUserCredentialsException(
-                        errorMessage.BAD_CREDENTIALS
-                )
+            () -> new BadUserCredentialsException(
+                errorMessage.BAD_CREDENTIALS
+            )
         );
 
         if (isAccountLocked(userComplete))
@@ -56,7 +56,8 @@ public class SignInService implements SignInUseCase {
             ));
 
             // Reset failed attempts on successful login
-            resetFailedAttempts(userComplete);
+            if(userComplete.getFailAttempts() > 0)
+                resetFailedAttempts(userComplete);
 
             // Update the last logger
             user.setLoggerAt(LocalDateTime.now());

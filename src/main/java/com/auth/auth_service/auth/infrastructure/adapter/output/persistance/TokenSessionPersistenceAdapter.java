@@ -63,4 +63,11 @@ public class TokenSessionPersistenceAdapter implements TokenSessionOutputPort {
     public boolean existsBySessionId(String sessionId) {
         return tokenSessionRepository.existsBySessionId(sessionId);
     }
+
+    @Override
+    public TokenSession deleteTokenSession(TokenSession tokenSession) {
+        TokenSessionEntity tokenSessionEntity = tokenSessionPersistenceMapper.toTokenSessionEntity(tokenSession);
+        tokenSessionRepository.delete(tokenSessionEntity);
+        return tokenSession;
+    }
 }

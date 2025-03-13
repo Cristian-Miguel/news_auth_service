@@ -18,4 +18,6 @@ public interface TokenSessionOutputPort {
 
     boolean existsBySessionId(String sessionId);
 
+    TokenSession deleteTokenSession(TokenSession tokenSession);
+
 }

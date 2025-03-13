@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,19 +40,29 @@ public class RefreshTokenService implements RefreshTokenUseCase {
     )
     @Override
     public Authentication refreshToken(String refresh){
-
         try {
-
             String username = jwtUtils.getUsernameFromToken(refresh);
+            
+            Date expiredTokenDate =  jwtUtils.getExpiration(refresh);
+
+            LocalDateTime expired = expiredTokenDate
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            
+            LocalDateTime nearToExpired = expired.minusDays(3);
 
             User user = userOutputPort.findByUsername(username)
                     .orElseThrow(
-                            () -> new UserNotFoundException(errorMessage.buildUsernameDontExistError(username))
+                        () -> new UserNotFoundException(errorMessage.buildUsernameDontExistError(username))
                     );
 
             String accessToken = jwtUtils.getToken(user);
-
-            String refreshToken = updateTokenSession(user, refresh);
+            
+            //update the refresh token if this is near to expired
+            String refreshToken = nearToExpired.isBefore(LocalDateTime.now()) ?
+                updateTokenSession(user, refresh) :
+                refresh;
 
             return Authentication.builder()
                     .accessToken(accessToken)
@@ -59,11 +71,14 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
         } catch (ExpiredJwtException ex) {
 
-            TokenSession session = tokenSessionOutputPort.findByRefreshToken(refresh).orElseThrow(
+            TokenSession session = tokenSessionOutputPort.findByRefreshToken(encryptionUtil.encryptRefreshToken(refresh)).orElseThrow(
                     () -> new RefreshTokenException("Token refresh invalid.")
             );
+            
+            //Delete the token session from the database
+            session = tokenSessionOutputPort.deleteTokenSession(session);
 
-            throw new RefreshTokenException("Token refresh invalid.");
+            throw new RefreshTokenException("Token refresh expired.");
 
         } catch (MalformedJwtException ex){
             throw new RefreshTokenException("Token refresh invalid.");
@@ -113,7 +128,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         }
 
         TokenSession session = tokenSessionOutputPort.findBySessionId(uuid).orElseThrow(
-                () -> new RefreshTokenException("Token don't have access to this service")
+            () -> new RefreshTokenException("Token don't have access to this service")
         );
 
         if(session.isRevoked()){

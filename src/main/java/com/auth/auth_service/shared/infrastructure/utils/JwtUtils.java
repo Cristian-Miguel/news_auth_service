@@ -47,6 +47,7 @@ public class JwtUtils {
     public Map<String, Object> getRefreshToken(String uuid, User user){
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("uuid", uuid);
+        claims.put("role", user.getRole().getEnumName());
         return getRefreshToken(claims, user);
     }
 
