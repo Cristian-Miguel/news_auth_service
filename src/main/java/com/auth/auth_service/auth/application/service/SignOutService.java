@@ -12,6 +12,7 @@ import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,9 @@ public class SignOutService implements SignOutUseCase {
     public String signOut(String refreshToken)
       throws ExpiredJwtException {
         try {
+            if(refreshToken == null || refreshToken.isEmpty()){
+                throw new RefreshTokenException("The refresh token is invalid");
+            }
             Map<String, Object> claims = jwtUtils.getAllClaims(refreshToken);
             String uuid = (String) claims.get("uuid");
 
@@ -47,6 +51,8 @@ public class SignOutService implements SignOutUseCase {
         } catch (ExpiredJwtException ex) {
             throw new BadUserCredentialsException(errorMessage.TOKEN_EXPIRED);
         } catch (MalformedJwtException ex) {
+            throw new BadUserCredentialsException(errorMessage.TOKEN_MALFORMAT);
+        } catch (SignatureException e) {//SignatureException
             throw new BadUserCredentialsException(errorMessage.TOKEN_MALFORMAT);
         }
     }

@@ -13,11 +13,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+
+import java.nio.charset.StandardCharsets;
+import java.security.spec.EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Base64.Encoder;
 import java.util.function.Function;
 
 @Component
@@ -86,8 +91,9 @@ public class JwtUtils {
     }
 
     private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
-//        return Jwts.SIG.HS256.key().build();
+        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+    //   return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    //    return Jwts.SIG.HS256.key().build();
     }
 
     public String getUsernameFromToken(String token) {
