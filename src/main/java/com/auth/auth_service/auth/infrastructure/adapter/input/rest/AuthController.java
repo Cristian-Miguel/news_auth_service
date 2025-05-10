@@ -31,6 +31,7 @@ public class AuthController {
     @PostMapping(value = "/sign_up")
     public ResponseEntity<GenericResponse<AuthResponse>> signUp(@RequestBody @Valid SignUpRequest request) {
         User user = authRestMapper.toUser(request);
+        user.getRole().setEnumName(request.getRole());
         Authentication result = signUpUseCase.signUp(user);
         AuthResponse authComponents = authRestMapper.toAuthResponse(result);
 

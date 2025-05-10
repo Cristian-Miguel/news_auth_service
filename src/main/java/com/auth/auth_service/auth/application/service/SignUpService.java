@@ -39,7 +39,7 @@ public class SignUpService implements SignUpUseCase {
 
         validateRequest(user);
 
-        Role role = roleOutputPort.findByEnumName(RoleEnum.valueOf(user.getRole().getName().toUpperCase()))
+        Role role = roleOutputPort.findByEnumName(user.getRole().getEnumName())
                 .orElseThrow(
                         () -> new RoleNotFoundException(errorMessage.ROLE_NOT_FOUND)
                 );

@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -37,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
         final String token = getTokenFromRequest(request);
         final String username;
         final String uri = request.getRequestURI();
+        RoleEnum role;
 
         //uri.equals("/api/auth/sign_out"))
         if(token==null &&
@@ -56,8 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             Map<String, Object> claims = jwtUtils.getAllClaims(token);
 
-            RoleEnum role = RoleEnum.valueOf( (String) claims.get("role") );
-            String email = (String) claims.get("email");
+            role = RoleEnum.valueOf( (String) claims.get("role") );
 
         } catch (ExpiredJwtException ex){
             handleErrorResponse(response, "Token expired.",
@@ -76,10 +79,12 @@ public class JwtFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (jwtUtils.isTokenValid(token, userDetails)){
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role.getCode()));
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities());
+                        authorities//userDetails.getAuthorities(),
+                    );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

@@ -8,8 +8,14 @@ import com.auth.auth_service.user.infrastructure.adapter.output.persistence.mapp
 import com.auth.auth_service.shared.infrastructure.constant.EventType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import lombok.AllArgsConstructor;
+
+import java.util.concurrent.CompletableFuture;
+
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 
 @AllArgsConstructor
 public class KafkaUserEventPublisherAdapter implements UserEventPublisher {
@@ -32,6 +38,7 @@ public class KafkaUserEventPublisherAdapter implements UserEventPublisher {
             String jsonFormat = objectMapper.writeValueAsString(messageFormat);
 
             kafkaTemplate.send("user-updates", jsonFormat);
+            
         } catch (JsonProcessingException e) {
             System.err.println("Error converting user to JSON: " + e.getMessage());
         }

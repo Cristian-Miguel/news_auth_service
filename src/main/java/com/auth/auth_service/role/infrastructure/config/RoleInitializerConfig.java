@@ -34,7 +34,7 @@ public class RoleInitializerConfig implements CommandLineRunner {
         return rolePersistenceAdapter.saveUser(Role.builder()
             .enumName(role)
             .description(role.getDescription())
-            .name(role.getName())
+            .name(role.getPublicName())
             .build()
         );
     }

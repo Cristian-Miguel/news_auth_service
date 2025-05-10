@@ -25,7 +25,7 @@ public class KafkaUserEventListenerAdapter implements UserEventListener {
         try {
             FormatEventResponse eventResponse = objectMapper.readValue(message, FormatEventResponse.class);
 
-            if(!eventResponse.getSource().equals("user-service"))
+            if(eventResponse.getSource().equals("auth-service"))
                 return;
 
             if(eventResponse.getEventType().equals(EventType.USER_CREATED)){
