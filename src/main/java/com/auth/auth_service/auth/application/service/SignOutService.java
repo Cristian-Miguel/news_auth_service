@@ -8,6 +8,7 @@ import com.auth.auth_service.auth.domain.model.TokenSession;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.domain.exception.UserNotFoundException;
 import com.auth.auth_service.user.domain.model.User;
+import com.auth.auth_service.shared.infrastructure.adapter.output.RedisCachePort;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,8 +17,10 @@ import io.jsonwebtoken.security.SignatureException;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @AllArgsConstructor
 public class SignOutService implements SignOutUseCase {
@@ -26,6 +29,9 @@ public class SignOutService implements SignOutUseCase {
     private final TokenSessionOutputPort tokenSessionOutputPort;
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
+    private final RedisCachePort redisCachePort;
+
+    private static final String BLACKLIST_PREFIX = "blacklist:";
 
     @Transactional
     @Override
@@ -39,12 +45,18 @@ public class SignOutService implements SignOutUseCase {
             String uuid = (String) claims.get("uuid");
 
             TokenSession sessionActive = tokenSessionOutputPort.findBySessionId(uuid)
-                    .orElseThrow(
-                            () -> new RefreshTokenException("The refresh token is invalid")
-                    );
+                .orElseThrow(
+                    () -> new RefreshTokenException("The refresh token is invalid")
+                );
+            
+            Date expiration = jwtUtils.getExpiration(refreshToken);
+            long ttl = expiration.getTime() - System.currentTimeMillis();
+
+            if (ttl > 0) {
+                redisCachePort.save(BLACKLIST_PREFIX + uuid, "revoked", ttl, TimeUnit.MILLISECONDS);
+            }
 
             sessionActive.setRevoked(true);
-
             tokenSessionOutputPort.saveTokenSession(sessionActive);
 
             return "Successful sign out";
@@ -73,6 +85,11 @@ public class SignOutService implements SignOutUseCase {
 
             for (TokenSession sessionDevice : sessionsActive){
                 sessionDevice.setRevoked(true);
+                long ttl = java.sql.Timestamp.valueOf(sessionDevice.getExpiredAt()).getTime() - System.currentTimeMillis();
+
+                if (ttl > 0) {
+                    redisCachePort.save(BLACKLIST_PREFIX + sessionDevice.getSessionId(), "revoked", ttl, TimeUnit.MILLISECONDS);
+                }
 
                 tokenSessionOutputPort.saveTokenSession(sessionDevice);
             }

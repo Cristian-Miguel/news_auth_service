@@ -11,6 +11,7 @@ import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.Toke
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.mapper.TokenSessionPersistenceMapper;
 import com.auth.auth_service.auth.infrastructure.adapter.output.persistance.repository.TokenSessionRepository;
 import com.auth.auth_service.role.application.port.output.RoleOutputPort;
+import com.auth.auth_service.shared.infrastructure.adapter.output.RedisCachePort;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.EncryptionUtil;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
@@ -46,14 +47,16 @@ public class AuthBeanConfiguration {
             final UserOutputPort userOutputPort,
             final EncryptionUtil encryptionUtil,
             final ErrorMessage errorMessage,
-            final JwtUtils jwtUtils
+            final JwtUtils jwtUtils,
+            final RedisCachePort redisCachePort
             ){
         return new RefreshTokenService(
                 tokenSessionOutputPort,
                 userOutputPort,
                 encryptionUtil,
                 errorMessage,
-                jwtUtils
+                jwtUtils,
+                redisCachePort
         );
     }
 
@@ -105,13 +108,15 @@ public class AuthBeanConfiguration {
             final UserOutputPort userOutputPort,
             final TokenSessionOutputPort tokenSessionOutputPort,
             final ErrorMessage errorMessage,
-            final JwtUtils jwtUtils
+            final JwtUtils jwtUtils,
+            final RedisCachePort redisCachePort
     ){
         return new SignOutService(
                 userOutputPort,
                 tokenSessionOutputPort,
                 errorMessage,
-                jwtUtils
+                jwtUtils,
+                redisCachePort
         );
     }
 

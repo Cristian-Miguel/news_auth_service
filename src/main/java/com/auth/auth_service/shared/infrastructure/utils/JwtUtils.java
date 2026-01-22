@@ -121,6 +121,12 @@ public class JwtUtils {
         return getClaim(token, Claims::getExpiration);
     }
 
+    public String getUuidFromToken(String token) {
+        Claims claims = getAllClaims(token);
+        String uuid = claims.get("uuid", String.class);
+        return uuid;
+    }
+
     private boolean isTokenExpired(String token){
         return getExpiration(token).before(new Date());
     }

@@ -9,6 +9,7 @@ import com.auth.auth_service.auth.domain.exception.RefreshTokenException;
 import com.auth.auth_service.user.application.port.output.UserOutputPort;
 import com.auth.auth_service.user.domain.exception.UserNotFoundException;
 import com.auth.auth_service.user.domain.model.User;
+import com.auth.auth_service.shared.infrastructure.adapter.output.RedisCachePort;
 import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
 import com.auth.auth_service.shared.infrastructure.utils.EncryptionUtil;
 import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
@@ -32,6 +33,9 @@ public class RefreshTokenService implements RefreshTokenUseCase {
     private final EncryptionUtil encryptionUtil;
     private final ErrorMessage errorMessage;
     private final JwtUtils jwtUtils;
+    private final RedisCachePort redisCachePort;
+
+    private static final String BLACKLIST_PREFIX = "blacklist:";
 
     @Transactional(noRollbackFor = {
             ExpiredJwtException.class,
@@ -42,6 +46,19 @@ public class RefreshTokenService implements RefreshTokenUseCase {
     public Authentication refreshToken(String refresh){
         try {
             String username = jwtUtils.getUsernameFromToken(refresh);
+            String uuid = jwtUtils.getUuidFromToken(refresh);
+
+            if (redisCachePort.hasKey(BLACKLIST_PREFIX + uuid)) {
+                throw new BadUserCredentialsException("Access token is revoked/invalid.");
+            } else {
+                TokenSession sessionCheck = tokenSessionOutputPort.findBySessionId(uuid).orElseThrow(
+                    () -> new RefreshTokenException("Token don't have access to this service")
+                );
+
+                if(sessionCheck.isRevoked()){
+                    throw new BadUserCredentialsException("Access token is invalid to refresh.");
+                }
+            }
             
             Date expiredTokenDate =  jwtUtils.getExpiration(refresh);
 
@@ -125,6 +142,10 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
         if(uuid==null) {
             throw new RefreshTokenException("Token refresh invalid.");
+        }
+
+        if (redisCachePort.hasKey(BLACKLIST_PREFIX + uuid)) {
+            throw new BadUserCredentialsException("Access token is revoked/invalid.");
         }
 
         TokenSession session = tokenSessionOutputPort.findBySessionId(uuid).orElseThrow(
