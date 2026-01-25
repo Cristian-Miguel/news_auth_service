@@ -12,7 +12,10 @@ public class EncryptionUtil {
     @Value("${crypto.secret-key}")
     private String SECRET_KEY;
 
-    private static final String SALT = KeyGenerators.string().generateKey();
+    @Value("${crypto.salt}")
+    private String SALT;
+
+    // private static final String SALT = KeyGenerators.string().generateKey();
 
     public String encryptRefreshToken(String refreshToken){
         TextEncryptor encryptor = Encryptors.text(SECRET_KEY, SALT);
@@ -22,6 +25,15 @@ public class EncryptionUtil {
     public String decryptRefreshToken(String encryptedRefreshToken){
         TextEncryptor decryptor = Encryptors.text(SECRET_KEY, SALT);
         return decryptor.decrypt(encryptedRefreshToken);
+    }
+
+    public boolean verifyRefreshToken(String rawToken, String encryptedToken) {
+        try {
+            String decryptedDbToken = decryptRefreshToken(encryptedToken);
+            return decryptedDbToken.equals(rawToken);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

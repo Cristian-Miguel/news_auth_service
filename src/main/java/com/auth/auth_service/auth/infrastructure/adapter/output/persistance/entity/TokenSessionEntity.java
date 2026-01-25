@@ -9,12 +9,18 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="tbl_token_session")
+@Table(name="tbl_token_session", indexes = {
+    @Index(name = "idx_token_session_expired_at", columnList = "expiredAt"),
+    @Index(name = "idx_token_session_user", columnList = "id_user")
+})
 public class TokenSessionEntity {
 
     @Id
@@ -24,7 +30,7 @@ public class TokenSessionEntity {
     @Column(nullable = false, unique = true)
     private String sessionId;
 
-    @Column(nullable = false, unique = true, length = 512)
+    @Column(nullable = false, unique = true, length = 1024)
     private String refreshToken;
 
     @Column(nullable = false)
@@ -39,5 +45,6 @@ public class TokenSessionEntity {
 
     @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_user", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
 }

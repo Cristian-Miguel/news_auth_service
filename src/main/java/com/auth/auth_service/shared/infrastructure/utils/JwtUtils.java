@@ -42,14 +42,14 @@ public class JwtUtils {
     public String getToken(User user){
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
-        claims.put("role", user.getRole().getEnumName());
+        claims.put("role", user.getRole().getEnumName().getCode());
         return getToken(claims, user, new Date(System.currentTimeMillis()+EXPIRED_DATE));
     }
 
     public Map<String, Object> getRefreshToken(String uuid, User user){
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("uuid", uuid);
-        claims.put("role", user.getRole().getEnumName());
+        claims.put("role", user.getRole().getEnumName().getCode());
         return getRefreshToken(claims, user);
     }
 

@@ -10,6 +10,7 @@ import com.auth.auth_service.user.infrastructure.adapter.output.persistence.enti
 import com.auth.auth_service.user.infrastructure.adapter.output.persistence.mapper.UserPersistenceMapper;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,11 @@ public class TokenSessionPersistenceAdapter implements TokenSessionOutputPort {
     private final TokenSessionRepository tokenSessionRepository;
     private final TokenSessionPersistenceMapper tokenSessionPersistenceMapper;
     private final UserPersistenceMapper userPersistenceMapper;
+
+    @Override
+    public void deleteByExpiredAtBefore(LocalDateTime now) {
+        tokenSessionRepository.deleteByExpiredAtBefore(now);
+    }
 
     @Override
     public TokenSession saveTokenSession(TokenSession tokenSession) {
