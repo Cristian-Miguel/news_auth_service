@@ -1,23 +1,19 @@
-package com.auth.auth_service.user.domain.event;
+package com.auth.auth_service.user.infrastructure.adapter.input.rest.data.response;
+
+import java.time.LocalDate;
 
 import com.auth.auth_service.role.domain.model.Role;
-import com.auth.auth_service.user.domain.model.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreatedEvent {
-
-    private Long id;
+public class UserResponse {
 
     private String uuid;
 
@@ -29,17 +25,10 @@ public class UserCreatedEvent {
 
     private String lastName;
 
-    private String profilePictureUrl;
-
-    private LocalDateTime createAt;
-
-    private LocalDateTime updateAt;
-
     private Role role;
 
     private LocalDate birthDate;
 
-    private LocalDateTime lockTime;
+    private String uuidAdmin;
 
-    private User adminUser;
 }

@@ -39,6 +39,7 @@ public class User {
 
     private LocalDate birthDate;
 
+    @Builder.Default
     private int failAttempts = 0;
 
     private LocalDateTime lockTime;

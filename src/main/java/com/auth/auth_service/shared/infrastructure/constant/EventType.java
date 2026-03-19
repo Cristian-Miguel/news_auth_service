@@ -6,7 +6,10 @@ public enum EventType {
     USER_UPDATE,
     USER_DELETE,
     RESET_PASSWORD,
-    VALIDATE_EMAIL
+    VALIDATE_EMAIL,
+    USER_BLOCK,
+    USER_UNBLOCK,
+    USER_CHANGE_ROLE
     ;
 
 }

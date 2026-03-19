@@ -32,6 +32,18 @@ public class UserPersistenceAdapter implements UserOutputPort {
     }
 
     @Override
+    public Optional<User> findByUuid(String uuid) {
+        final Optional<UserEntity> userEntity = userRepository.findByUuid(uuid);
+
+        if(userEntity.isEmpty())
+            return Optional.empty();
+
+        final User user = userPersistenceMapper.toUser(userEntity.get());
+
+        return Optional.of(user);
+    }
+
+    @Override
     public Optional<User> findByUsername(String username) {
         final Optional<UserEntity> userEntity = userRepository.findByUsername(username);
 

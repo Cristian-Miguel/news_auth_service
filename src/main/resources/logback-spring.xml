@@ -1,0 +1,26 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    
+    <springProperty scope="context" name="lokiUrl" source="management.loki.url" defaultValue="http://localhost:3100/loki/api/v1/push"/>
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${lokiUrl}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${appName},host=${HOSTNAME},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>l=%level h=${HOSTNAME} c=%logger{20} t=%thread | %msg %ex</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOKI"/>
+    </root>
+</configuration>

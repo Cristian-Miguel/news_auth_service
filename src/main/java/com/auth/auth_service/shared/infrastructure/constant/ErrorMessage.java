@@ -2,6 +2,8 @@ package com.auth.auth_service.shared.infrastructure.constant;
 
 import org.springframework.stereotype.Component;
 
+import com.auth.auth_service.role.infrastructure.constant.RoleEnum;
+
 @Component
 public class ErrorMessage {
 
@@ -54,5 +56,21 @@ public class ErrorMessage {
                 email +
                 "'" +
                 " isn't exist in the system.";
+    }
+
+    public String buildUuidUserDontExistError(String uuid){
+        return "The user uuid" +
+                "'" +
+                uuid +
+                "'" +
+                " isn't exist in the system.";
+    }
+
+    public String buildAccessDeniedByRoleError(RoleEnum role){
+        return "The role " +
+                "'" +
+                role.name() +
+                "'" +
+                " doesn't have access to this resource.";
     }
 }

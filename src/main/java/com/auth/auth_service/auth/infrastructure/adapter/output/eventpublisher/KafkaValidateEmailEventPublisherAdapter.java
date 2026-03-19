@@ -1,7 +1,6 @@
 package com.auth.auth_service.auth.infrastructure.adapter.output.eventpublisher;
 
 import com.auth.auth_service.auth.application.port.output.ValidateEmailPublisherEvent;
-import com.auth.auth_service.auth.domain.event.ResetPasswordEvent;
 import com.auth.auth_service.auth.domain.event.ValidateEmailEvent;
 import com.auth.auth_service.shared.domain.event.FormatEventResponse;
 import com.auth.auth_service.shared.infrastructure.constant.EventType;

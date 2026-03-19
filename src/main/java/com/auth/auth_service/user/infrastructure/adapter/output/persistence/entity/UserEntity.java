@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -35,35 +34,31 @@ public class UserEntity implements UserDetails {
     private String username;
 
     @Column(nullable = false)
-    private String firstName;
+    private String password;
 
-    @Column(nullable = false)
-    private String lastName;
+    @Column(nullable = false, length = 10)
+    @Builder.Default
+    private int failAttempts = 0;
 
-    @Column(nullable = false)
-    private LocalDateTime createAt;
+    @Column(nullable = true)
+    private LocalDateTime lockTime;
 
     @Column(nullable = false)
     private LocalDateTime loggerAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updateAt;
 
     @ManyToOne(targetEntity = RoleEntity.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_role", nullable = false)
     private RoleEntity role;
 
     @Column(nullable = false)
-    private String password;
+    private LocalDateTime createAt;
 
     @Column(nullable = false)
-    private LocalDate birthDate;
+    private LocalDateTime updateAt;
 
-    @Column(nullable = false, length = 10)
-    private int failAttempts = 0;
-
-    @Column(nullable = true)
-    private LocalDateTime lockTime;
+    @ManyToOne(targetEntity = UserEntity.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_admin_user", nullable = true)
+    private UserEntity adminUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

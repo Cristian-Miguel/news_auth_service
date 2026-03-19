@@ -1,5 +1,8 @@
 package com.auth.auth_service.user.infrastructure.config;
 
+import com.auth.auth_service.role.application.port.output.RoleOutputPort;
+import com.auth.auth_service.shared.infrastructure.constant.ErrorMessage;
+import com.auth.auth_service.shared.infrastructure.utils.JwtUtils;
 import com.auth.auth_service.user.application.port.input.UserCreateUseCase;
 import com.auth.auth_service.user.application.port.input.UserDeleteUseCase;
 import com.auth.auth_service.user.application.port.input.UserUpdateUseCase;
@@ -52,8 +55,14 @@ public class UserBeanConfiguration {
     public UserEventService userEventService(
         final ObjectMapper objectMapper,
         final UserOutputPort userOutputPort,
-        final UserPersistenceMapper userPersistenceMapper
+        final UserPersistenceMapper userPersistenceMapper,
+        final ErrorMessage errorMessage,
+        final RoleOutputPort roleOutputPort,
+        final JwtUtils jwtUtils
     ){
-        return new UserEventService(objectMapper, userOutputPort, userPersistenceMapper);
+        return new UserEventService(
+            objectMapper, userOutputPort, userPersistenceMapper, 
+            errorMessage, roleOutputPort, jwtUtils
+        );
     }
 }
